@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casa Hunt — Near Abbott, Santa Clara</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#0D0F0E;
+  --surface:#161918;
+  --surface2:#1E2220;
+  --border:#2A2E2C;
+  --border2:#363C39;
+  --text:#F0EDE6;
+  --muted:#8A9490;
+  --accent:#A8C5A0;
+  --accent2:#6FA86A;
+  --gold:#C9A96E;
+  --gold2:#A8813E;
+  --radius:12px;
+  --radius-lg:20px;
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── HERO / LANDING ── */
+#hero{
+  position:relative;
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+}
+
+#hero-bg{
+  position:absolute;
+  inset:0;
+  background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1600&q=80');
+  background-size:cover;
+  background-position:center;
+  filter:brightness(0.35) saturate(0.7);
+  transition:filter 1.2s ease;
+  z-index:0;
+}
+
+#hero:hover #hero-bg{filter:brightness(0.42) saturate(0.8)}
+
+#hero-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(to bottom, rgba(13,15,14,0.1) 0%, rgba(13,15,14,0.85) 100%);
+  z-index:1;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  padding:2rem;
+}
+
+.hero-tag{
+  display:inline-block;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--gold);
+  border:1px solid var(--gold2);
+  padding:5px 16px;
+  border-radius:999px;
+  margin-bottom:1.5rem;
+}
+
+.hero-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(3rem,8vw,6rem);
+  font-weight:700;
+  line-height:1.05;
+  letter-spacing:-1px;
+  color:var(--text);
+  margin-bottom:1rem;
+}
+
+.hero-title span{color:var(--accent)}
+
+.hero-sub{
+  font-size:16px;
+  color:var(--muted);
+  margin-bottom:2.5rem;
+  max-width:400px;
+  margin-left:auto;
+  margin-right:auto;
+  line-height:1.6;
+}
+
+.hero-cta{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:14px 32px;
+  background:var(--accent);
+  color:#0D0F0E;
+  font-family:'DM Sans',sans-serif;
+  font-size:15px;
+  font-weight:500;
+  border:none;
+  border-radius:999px;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-decoration:none;
+}
+.hero-cta:hover{background:var(--accent2);transform:translateY(-2px)}
+.hero-cta svg{transition:transform 0.2s}
+.hero-cta:hover svg{transform:translateX(3px)}
+
+.hero-stats{
+  position:absolute;
+  bottom:2.5rem;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:2;
+  display:flex;
+  gap:3rem;
+}
+.hero-stat{text-align:center}
+.hero-stat-val{
+  font-family:'DM Mono',monospace;
+  font-size:28px;
+  font-weight:500;
+  color:var(--text);
+}
+.hero-stat-label{font-size:11px;color:var(--muted);letter-spacing:0.08em;text-transform:uppercase;margin-top:2px}
+
+/* ── MAIN APP ── */
+#app{display:none;min-height:100vh}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(13,15,14,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.topbar-logo{
+  font-family:'Playfair Display',serif;
+  font-size:20px;
+  color:var(--text);
+}
+.topbar-logo span{color:var(--accent)}
+
+.topbar-actions{display:flex;align-items:center;gap:10px}
+
+.btn{
+  font-family:'DM Sans',sans-serif;
+  font-size:13px;
+  font-weight:500;
+  padding:7px 16px;
+  border-radius:999px;
+  border:1px solid var(--border2);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#0D0F0E;border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent2);border-color:var(--accent2);color:#0D0F0E}
+
+/* ── STATS BAR ── */
+.stats-bar{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  border-bottom:1px solid var(--border);
+}
+.stat-cell{
+  padding:1.25rem 1.5rem;
+  border-right:1px solid var(--border);
+}
+.stat-cell:last-child{border-right:none}
+.stat-label{font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.stat-val{font-family:'DM Mono',monospace;font-size:22px;color:var(--text)}
+
+/* ── FILTERS ── */
+.filters-row{
+  padding:1rem 2rem;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+}
+.filter-btn{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  padding:5px 14px;
+  border-radius:999px;
+  border:1px solid var(--border2);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all 0.12s;
+}
+.filter-btn:hover{color:var(--text);border-color:var(--muted)}
+.filter-btn.active{background:var(--surface2);color:var(--text);border-color:var(--border2)}
+.filter-btn.active-status-called{background:rgba(168,197,160,0.15);color:var(--accent);border-color:var(--accent)}
+.filter-btn.active-status-inquired{background:rgba(201,169,110,0.15);color:var(--gold);border-color:var(--gold2)}
+.filter-btn.active-status-emailed{background:rgba(100,160,220,0.15);color:#7ABAEE;border-color:#4A8ABE}
+.filter-btn.active-status-pass{background:rgba(138,148,144,0.1);color:var(--muted);border-color:var(--border2)}
+
+.type-tabs{display:flex;gap:0;margin-left:auto}
+.type-tab{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;
+  font-weight:500;
+  padding:5px 16px;
+  border:1px solid var(--border2);
+  background:transparent;
+  color:var(--muted);
+  cursor:pointer;
+  transition:all 0.12s;
+}
+.type-tab:first-child{border-radius:999px 0 0 999px}
+.type-tab:last-child{border-radius:0 999px 999px 0;border-left:none}
+.type-tab.active{background:var(--gold2);color:#0D0F0E;border-color:var(--gold2)}
+
+/* ── GRID ── */
+.listings{
+  padding:1.5rem 2rem 4rem;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:16px;
+}
+
+/* ── CARD ── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius-lg);
+  overflow:hidden;
+  cursor:pointer;
+  transition:border-color 0.2s, transform 0.2s;
+  animation:cardIn 0.3s ease both;
+}
+.card:hover{border-color:var(--border2);transform:translateY(-3px)}
+@keyframes cardIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.card-image{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  display:block;
+  background:var(--surface2);
+  position:relative;
+}
+.card-image-wrap{position:relative;overflow:hidden;height:200px}
+.card-image-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s}
+.card:hover .card-image-wrap img{transform:scale(1.04)}
+.card-image-placeholder{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);
+  flex-direction:column;gap:8px;
+  color:var(--muted);font-size:13px;
+}
+.card-image-placeholder svg{opacity:0.4}
+
+.card-badges{
+  position:absolute;
+  top:10px;left:10px;
+  display:flex;gap:6px;
+}
+.badge{
+  font-size:10px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;
+  padding:4px 10px;border-radius:999px;
+}
+.badge-type{background:rgba(13,15,14,0.75);color:var(--text);backdrop-filter:blur(8px)}
+.badge-called{background:rgba(168,197,160,0.9);color:#0D3010}
+.badge-inquired{background:rgba(201,169,110,0.9);color:#3A2500}
+.badge-emailed{background:rgba(100,160,220,0.85);color:#0A1E35}
+.badge-pass{background:rgba(50,55,52,0.9);color:var(--muted)}
+.badge-new{background:rgba(201,169,110,0.9);color:#3A2500}
+
+.card-body{padding:1rem 1.1rem 1rem}
+.card-name{font-size:16px;font-weight:500;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-price{font-family:'DM Mono',monospace;font-size:18px;color:var(--gold);margin-bottom:10px}
+.card-meta{display:flex;gap:12px;font-size:12px;color:var(--muted);margin-bottom:10px;flex-wrap:wrap}
+.card-meta span{display:flex;align-items:center;gap:4px}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--border)}
+.card-contact{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%}
+.card-arrow{color:var(--muted);transition:color 0.15s,transform 0.15s}
+.card:hover .card-arrow{color:var(--accent);transform:translateX(3px)}
+
+.empty-state{
+  grid-column:1/-1;
+  text-align:center;
+  padding:5rem 2rem;
+  color:var(--muted);
+}
+.empty-state p:first-child{font-family:'Playfair Display',serif;font-size:3rem;margin-bottom:1rem;opacity:0.3}
+
+/* ── DETAIL PANEL ── */
+#panel-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(4px);
+  display:none;
+  align-items:flex-end;
+  justify-content:flex-end;
+}
+#panel-overlay.open{display:flex}
+
+#panel{
+  width:min(600px,100vw);
+  height:100vh;
+  background:var(--surface);
+  border-left:1px solid var(--border);
+  overflow-y:auto;
+  animation:slideIn 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
+}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+
+.panel-hero{
+  position:relative;
+  height:260px;
+  overflow:hidden;
+}
+.panel-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.panel-hero-placeholder{
+  width:100%;height:100%;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);flex-direction:column;gap:8px;
+}
+.panel-hero-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 40%,var(--surface) 100%);
+}
+.panel-close{
+  position:absolute;top:1rem;right:1rem;
+  width:36px;height:36px;
+  background:rgba(13,15,14,0.7);
+  border:1px solid var(--border2);
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--text);
+  backdrop-filter:blur(8px);
+  transition:background 0.15s;
+}
+.panel-close:hover{background:rgba(255,255,255,0.1)}
+
+.panel-body{padding:0 1.5rem 2rem}
+
+.panel-name{
+  font-family:'Playfair Display',serif;
+  font-size:26px;line-height:1.2;
+  color:var(--text);margin-bottom:0.5rem;
+}
+.panel-price{
+  font-family:'DM Mono',monospace;
+  font-size:20px;color:var(--gold);
+  margin-bottom:1rem;
+}
+
+.panel-badges{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+
+.panel-section{margin-bottom:1.5rem}
+.panel-section-title{
+  font-size:10px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:10px;
+  padding-bottom:6px;border-bottom:1px solid var(--border);
+}
+
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:10px 12px;
+}
+.field label{
+  font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:4px;
+}
+.field input,.field select,.field textarea{
+  width:100%;
+  font-family:'DM Sans',sans-serif;
+  font-size:14px;
+  background:transparent;
+  border:none;outline:none;
+  color:var(--text);
+  resize:none;
+}
+.field textarea{height:70px}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted);opacity:0.6}
+.field select option{background:var(--surface2);color:var(--text)}
+
+.field-full{grid-column:1/-1}
+
+/* layout image upload */
+.layout-upload-area{
+  border:1px dashed var(--border2);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  text-align:center;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:13px;
+  transition:border-color 0.15s,background 0.15s;
+  position:relative;
+}
+.layout-upload-area:hover{border-color:var(--accent);background:rgba(168,197,160,0.05)}
+.layout-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.layout-preview{width:100%;border-radius:var(--radius);object-fit:cover;max-height:200px;display:block;margin-top:8px}
+
+/* status selector */
+.status-pills{display:flex;gap:6px;flex-wrap:wrap}
+.status-pill{
+  font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:500;
+  padding:6px 14px;
+  border-radius:999px;
+  border:1px solid var(--border2);
+  background:transparent;color:var(--muted);
+  cursor:pointer;transition:all 0.12s;
+}
+.status-pill.active-called{background:rgba(168,197,160,0.2);color:var(--accent);border-color:var(--accent)}
+.status-pill.active-inquired{background:rgba(201,169,110,0.2);color:var(--gold);border-color:var(--gold2)}
+.status-pill.active-emailed{background:rgba(100,160,220,0.2);color:#7ABAEE;border-color:#4A8ABE}
+.status-pill.active-pass{background:rgba(138,148,144,0.15);color:var(--muted);border-color:var(--border2)}
+
+/* layout type suggestion */
+.layout-suggestion{
+  background:var(--surface2);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:12px 14px;
+  margin-bottom:10px;
+}
+.layout-suggestion h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
+.layout-suggestion p{font-size:12px;color:var(--muted);line-height:1.55}
+.layout-suggestion ul{font-size:12px;color:var(--muted);line-height:1.8;padding-left:1rem}
+
+.panel-footer{
+  display:flex;gap:8px;justify-content:flex-end;
+  padding:1rem 1.5rem;
+  border-top:1px solid var(--border);
+  position:sticky;bottom:0;
+  background:var(--surface);
+}
+
+.btn-danger{border-color:var(--border2);color:#C44;background:transparent}
+.btn-danger:hover{background:rgba(200,50,50,0.1);border-color:#C44;color:#F66}
+
+/* ── ADD MODAL ── */
+#add-modal-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(6px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+}
+#add-modal-overlay.open{display:flex}
+#add-modal{
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:var(--radius-lg);
+  padding:2rem;
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow-y:auto;
+  animation:fadeUp 0.25s ease;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#add-modal h2{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:1.5rem;color:var(--text)}
+
+.add-field{margin-bottom:14px}
+.add-field label{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+.add-field input,.add-field select,.add-field textarea{
+  width:100%;
+  font-family:'DM Sans',sans-serif;font-size:14px;
+  padding:9px 12px;
+  background:var(--surface2);
+  border:1px solid var(--border2);
+  border-radius:var(--radius);
+  color:var(--text);outline:none;
+  transition:border-color 0.15s;
+}
+.add-field input:focus,.add-field select:focus,.add-field textarea:focus{border-color:var(--accent)}
+.add-field textarea{height:72px;resize:none}
+.add-field input::placeholder,.add-field textarea::placeholder{color:var(--muted);opacity:0.5}
+.add-field select option{background:var(--surface2)}
+.add-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.add-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:1.5rem}
+
+@media(max-width:600px){
+  .stats-bar{grid-template-columns:repeat(2,1fr)}
+  .stat-cell:nth-child(2){border-right:none}
+  .listings{padding:1rem;grid-template-columns:1fr}
+  #panel{width:100vw}
+  .field-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div id="hero-bg"></div>
+  <div id="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Santa Clara · Near Abbott</div>
+    <h1 class="hero-title">Casa<br><span>Hunt</span></h1>
+    <p class="hero-sub">Your shared house-hunting dashboard. Track properties, layouts, and status in one place.</p>
+    <button class="hero-cta" onclick="enterApp()">
+      View listings
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="hero-count">0</div>
+      <div class="hero-stat-label">Listings</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="hero-2b">0</div>
+      <div class="hero-stat-label">2B/2B</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="hero-3b">0</div>
+      <div class="hero-stat-label">3B/2B</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── APP ── -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">Casa<span>Hunt</span></div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'})">← Back to top</button>
+      <button class="btn btn-primary" onclick="openAddModal()">+ Add property</button>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-cell"><div class="stat-label">Total</div><div class="stat-val" id="s-total">0</div></div>
+    <div class="stat-cell"><div class="stat-label">Avg rent</div><div class="stat-val" id="s-avg">—</div></div>
+    <div class="stat-cell"><div class="stat-label">Called</div><div class="stat-val" id="s-called">0</div></div>
+    <div class="stat-cell"><div class="stat-label">Applied</div><div class="stat-val" id="s-applied">0</div></div>
+    <div class="stat-cell"><div class="stat-label">2B/2B</div><div class="stat-val" id="s-2b">0</div></div>
+  </div>
+
+  <div class="filters-row">
+    <span style="font-size:11px;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-right:4px">Status</span>
+    <button class="filter-btn active" onclick="setFilter('all',this,'status')">All</button>
+    <button class="filter-btn" onclick="setFilter('called',this,'status')">Called</button>
+    <button class="filter-btn" onclick="setFilter('inquired',this,'status')">Inquired</button>
+    <button class="filter-btn" onclick="setFilter('emailed',this,'status')">Email sent</button>
+    <button class="filter-btn" onclick="setFilter('pass',this,'status')">Pass</button>
+    <div class="type-tabs" style="margin-left:auto">
+      <button class="type-tab active" onclick="setTypeFilter('all',this)">All types</button>
+      <button class="type-tab" onclick="setTypeFilter('2b2b',this)">2B/2B</button>
+      <button class="type-tab" onclick="setTypeFilter('3b2b',this)">3B/2B</button>
+    </div>
+  </div>
+
+  <div class="listings" id="listings-grid"></div>
+</div>
+
+<!-- ── DETAIL PANEL ── -->
+<div id="panel-overlay" onclick="maybeClosePanel(event)">
+  <div id="panel">
+    <div class="panel-hero" id="panel-hero-wrap">
+      <div class="panel-hero-placeholder" id="panel-hero-placeholder">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" opacity="0.4"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>No image</span>
+      </div>
+      <img id="panel-hero-img" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;position:absolute;inset:0">
+      <div class="panel-hero-gradient"></div>
+      <button class="panel-close" onclick="closePanel()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="panel-body">
+      <p id="panel-type-badge" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px"></p>
+      <h2 class="panel-name" id="panel-name">Property Name</h2>
+      <div class="panel-price" id="panel-price">—</div>
+
+      <div class="panel-badges" id="panel-badges"></div>
+
+      <!-- Status -->
+      <div class="panel-section">
+        <div class="panel-section-title">Contact status</div>
+        <div class="status-pills" id="status-pills">
+          <button class="status-pill" onclick="setStatus('called')">📞 Called</button>
+          <button class="status-pill" onclick="setStatus('inquired')">🔍 Inquired</button>
+          <button class="status-pill" onclick="setStatus('emailed')">✉️ Email sent</button>
+          <button class="status-pill" onclick="setStatus('pass')">✕ Pass</button>
+        </div>
+      </div>
+
+      <!-- Details -->
+      <div class="panel-section">
+        <div class="panel-section-title">Property details</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Property name</label>
+            <input type="text" id="pf-name" placeholder="e.g. The Pines" oninput="autosave()">
+          </div>
+          <div class="field">
+            <label>Price range</label>
+            <input type="text" id="pf-price" placeholder="e.g. $2,800–3,100/mo" oninput="autosave()">
+          </div>
+          <div class="field">
+            <label>Type</label>
+            <select id="pf-type" onchange="autosave();renderLayoutSuggestion()">
+              <option value="2b2b">2 Bed / 2 Bath</option>
+              <option value="3b2b">3 Bed / 2 Bath</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Distance to Abbott</label>
+            <input type="text" id="pf-dist" placeholder="e.g. 1.2 mi" oninput="autosave()">
+          </div>
+          <div class="field field-full">
+            <label>Listing URL</label>
+            <input type="url" id="pf-url" placeholder="https://zillow.com/..." oninput="autosave()">
+          </div>
+          <div class="field field-full">
+            <label>Address</label>
+            <input type="text" id="pf-addr" placeholder="123 Main St, Santa Clara, CA" oninput="autosave()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact -->
+      <div class="panel-section">
+        <div class="panel-section-title">Contact info</div>
+        <div class="field-grid">
+          <div class="field">
+            <label>Contact name</label>
+            <input type="text" id="pf-contact-name" placeholder="e.g. John Smith" oninput="autosave()">
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="pf-phone" placeholder="(408) 555-0100" oninput="autosave()">
+          </div>
+          <div class="field field-full">
+            <label>Email</label>
+            <input type="email" id="pf-email" placeholder="contact@property.com" oninput="autosave()">
+          </div>
+        </div>
+      </div>
+
+      <!-- What's available -->
+      <div class="panel-section">
+        <div class="panel-section-title">What's available</div>
+        <div class="field-grid">
+          <div class="field field-full">
+            <label>Available units / notes</label>
+            <textarea id="pf-available" placeholder="e.g. 2B/2B on 3rd floor available June 1, in-unit laundry, parking included..." oninput="autosave()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Layout type suggestion -->
+      <div class="panel-section">
+        <div class="panel-section-title">Layout suggestions</div>
+        <div id="layout-suggestion-box"></div>
+      </div>
+
+      <!-- Layout photo -->
+      <div class="panel-section">
+        <div class="panel-section-title">Floor plan / layout photo</div>
+        <div class="layout-upload-area" id="layout-upload-area">
+          <input type="file" accept="image/*" id="layout-file-input" onchange="handleLayoutUpload(event)">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="margin-top:6px">Click to upload floor plan image</div>
+          <div style="font-size:11px;margin-top:3px;opacity:0.5">PNG, JPG, WEBP</div>
+        </div>
+        <img id="layout-preview" class="layout-preview" src="" alt="" style="display:none;margin-top:10px">
+      </div>
+
+      <!-- Notes -->
+      <div class="panel-section">
+        <div class="panel-section-title">Notes</div>
+        <div class="field-grid">
+          <div class="field field-full">
+            <label>Personal notes</label>
+            <textarea id="pf-notes" placeholder="Pros, cons, impressions from the visit..." oninput="autosave()" style="height:90px"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-footer">
+      <button class="btn btn-danger" onclick="deleteProperty()">Delete</button>
+      <button class="btn" onclick="closePanel()">Close</button>
+      <button class="btn btn-primary" onclick="savePanel()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD MODAL ── -->
+<div id="add-modal-overlay" onclick="maybeCloseAdd(event)">
+  <div id="add-modal">
+    <h2>Add a property</h2>
+    <div class="add-field"><label>Property name</label><input type="text" id="a-name" placeholder="e.g. The Willows Apartments"></div>
+    <div class="add-2col">
+      <div class="add-field"><label>Price range</label><input type="text" id="a-price" placeholder="e.g. $2,800/mo"></div>
+      <div class="add-field"><label>Type</label>
+        <select id="a-type">
+          <option value="2b2b">2 Bed / 2 Bath</option>
+          <option value="3b2b">3 Bed / 2 Bath</option>
+        </select>
+      </div>
+    </div>
+    <div class="add-2col">
+      <div class="add-field"><label>Distance to Abbott</label><input type="text" id="a-dist" placeholder="e.g. 1.4 mi"></div>
+      <div class="add-field"><label>Status</label>
+        <select id="a-status">
+          <option value="inquired">Inquired</option>
+          <option value="called">Called</option>
+          <option value="emailed">Email sent</option>
+          <option value="pass">Pass</option>
+        </select>
+      </div>
+    </div>
+    <div class="add-field"><label>Address</label><input type="text" id="a-addr" placeholder="123 Main St, Santa Clara, CA"></div>
+    <div class="add-field"><label>Listing URL</label><input type="url" id="a-url" placeholder="https://zillow.com/..."></div>
+    <div class="add-field"><label>Contact</label><input type="text" id="a-contact" placeholder="Name / Phone / Email"></div>
+    <div class="add-field"><label>Notes</label><textarea id="a-notes" placeholder="First impressions, what's included..."></textarea></div>
+    <div class="add-footer">
+      <button class="btn" onclick="closeAddModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="confirmAdd()">Add property</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+let houses = JSON.parse(localStorage.getItem('casahunt_v2') || 'null') || [
+  {id:1,name:'The Pines on Kiely',addr:'482 Kiely Blvd, Santa Clara',price:'$2,650/mo',type:'2b2b',dist:'0.8 mi',status:'called',url:'',contactName:'Maria Lopez',phone:'(408) 555-0121',email:'maria@kiely.com',available:'Unit 204 available June 1. In-unit laundry, 1 parking spot.',notes:'Really nice complex. Quiet. Visited last weekend.',layoutImg:'',heroImg:'',added:Date.now()-100000},
+  {id:2,name:'Stevens Creek Place',addr:'3710 Stevens Creek Blvd #5',price:'$3,100/mo',type:'2b2b',dist:'1.4 mi',status:'inquired',url:'',contactName:'Tom Grant',phone:'(408) 555-0188',email:'tom@scplace.com',available:'2B/2B and 3B/2B both available. Balconies on upper floors.',notes:'Tour scheduled Saturday. Balcony is a big plus.',layoutImg:'',heroImg:'',added:Date.now()-80000},
+  {id:3,name:'Benton St Studio',addr:'711 Benton St, Santa Clara',price:'$2,400/mo',type:'2b2b',dist:'0.5 mi',status:'emailed',url:'',contactName:'Sam Wu',phone:'(408) 555-0177',email:'sam@benton.com',available:'1 unit left. Street parking only.',notes:'Closest to Abbott. Small but great location.',layoutImg:'',heroImg:'',added:Date.now()-60000},
+  {id:4,name:'Reed Ave House',addr:'1204 Reed Ave, Sunnyvale',price:'$3,400/mo',type:'3b2b',dist:'2.1 mi',status:'inquired',url:'',contactName:'',phone:'',email:'',available:'Whole house. 3B/2B. Backyard and garage.',notes:'Bit far but worth a look for the space.',layoutImg:'',heroImg:'',added:Date.now()-40000},
+];
+let nextId = Math.max(...houses.map(h=>h.id),0)+1;
+let statusFilter='all', typeFilter='all';
+let currentId=null;
+
+function save(){localStorage.setItem('casahunt_v2',JSON.stringify(houses))}
+
+// ── HERO ──
+function updateHeroStats(){
+  document.getElementById('hero-count').textContent=houses.length;
+  document.getElementById('hero-2b').textContent=houses.filter(h=>h.type==='2b2b').length;
+  document.getElementById('hero-3b').textContent=houses.filter(h=>h.type==='3b2b').length;
+}
+function enterApp(){
+  document.getElementById('hero').style.display='none';
+  document.getElementById('app').style.display='block';
+  render();
+}
+
+// ── FILTERS ──
+function setFilter(f,el,group){
+  statusFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active','active-status-called','active-status-inquired','active-status-emailed','active-status-pass'));
+  el.classList.add('active');
+  if(f!=='all') el.classList.add('active-status-'+f);
+  render();
+}
+function setTypeFilter(f,el){
+  typeFilter=f;
+  document.querySelectorAll('.type-tab').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+// ── RENDER ──
+const STATUS_BADGE={called:'badge-called',inquired:'badge-inquired',emailed:'badge-emailed',pass:'badge-pass'};
+const STATUS_LABEL={called:'Called',inquired:'Inquired',emailed:'Email sent',pass:'Pass'};
+const TYPE_LABEL={'2b2b':'2B / 2B','3b2b':'3B / 2B'};
+
+function parsePrice(p){const n=parseInt((p||'').replace(/\D/g,''));return isNaN(n)?0:n}
+
+function render(){
+  updateHeroStats();
+  let list=houses.filter(h=>{
+    if(statusFilter!=='all'&&h.status!==statusFilter)return false;
+    if(typeFilter!=='all'&&h.type!==typeFilter)return false;
+    return true;
+  });
+  list.sort((a,b)=>b.added-a.added);
+
+  const prices=houses.map(h=>parsePrice(h.price)).filter(Boolean);
+  document.getElementById('s-total').textContent=houses.length;
+  document.getElementById('s-avg').textContent=prices.length?'$'+Math.round(prices.reduce((a,b)=>a+b,0)/prices.length).toLocaleString():'—';
+  document.getElementById('s-called').textContent=houses.filter(h=>h.status==='called').length;
+  document.getElementById('s-applied').textContent=houses.filter(h=>h.status==='emailed').length;
+  document.getElementById('s-2b').textContent=houses.filter(h=>h.type==='2b2b').length;
+
+  const grid=document.getElementById('listings-grid');
+  if(!list.length){
+    grid.innerHTML='<div class="empty-state"><p>🏡</p><p>No listings yet — add one above</p></div>';
+    return;
+  }
+  grid.innerHTML=list.map((h,i)=>`
+    <div class="card" onclick="openPanel(${h.id})" style="animation-delay:${i*0.04}s">
+      <div class="card-image-wrap">
+        ${h.heroImg
+          ?`<img src="${esc(h.heroImg)}" alt="${esc(h.name)}" loading="lazy">`
+          :`<div class="card-image-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+              <span>Click to add image</span>
+            </div>`
+        }
+        <div class="card-badges">
+          <span class="badge badge-type">${esc(TYPE_LABEL[h.type]||h.type)}</span>
+          <span class="badge ${STATUS_BADGE[h.status]||'badge-new'}">${esc(STATUS_LABEL[h.status]||h.status)}</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${esc(h.name||h.addr||'Unnamed')}</div>
+        <div class="card-price">${esc(h.price)||'Price TBD'}</div>
+        <div class="card-meta">
+          ${h.dist?`<span>📍 ${esc(h.dist)} to Abbott</span>`:''}
+          ${h.addr?`<span>🏢 ${esc(h.addr)}</span>`:''}
+        </div>
+        <div class="card-footer">
+          <span class="card-contact">${esc(h.contactName||h.email||h.phone||'No contact yet')}</span>
+          <svg class="card-arrow" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 9h12M11 5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── PANEL ──
+function openPanel(id){
+  currentId=id;
+  const h=houses.find(h=>h.id===id);
+  if(!h)return;
+
+  // hero image
+  const img=document.getElementById('panel-hero-img');
+  const placeholder=document.getElementById('panel-hero-placeholder');
+  if(h.heroImg){img.src=h.heroImg;img.style.display='block';placeholder.style.display='none'}
+  else{img.style.display='none';placeholder.style.display='flex'}
+
+  document.getElementById('panel-type-badge').textContent=TYPE_LABEL[h.type]||h.type;
+  document.getElementById('panel-name').textContent=h.name||h.addr||'Unnamed';
+  document.getElementById('panel-price').textContent=h.price||'Price TBD';
+
+  // populate fields
+  document.getElementById('pf-name').value=h.name||'';
+  document.getElementById('pf-price').value=h.price||'';
+  document.getElementById('pf-type').value=h.type||'2b2b';
+  document.getElementById('pf-dist').value=h.dist||'';
+  document.getElementById('pf-url').value=h.url||'';
+  document.getElementById('pf-addr').value=h.addr||'';
+  document.getElementById('pf-contact-name').value=h.contactName||'';
+  document.getElementById('pf-phone').value=h.phone||'';
+  document.getElementById('pf-email').value=h.email||'';
+  document.getElementById('pf-available').value=h.available||'';
+  document.getElementById('pf-notes').value=h.notes||'';
+
+  // layout image
+  const lp=document.getElementById('layout-preview');
+  if(h.layoutImg){lp.src=h.layoutImg;lp.style.display='block'}
+  else{lp.style.display='none'}
+
+  renderStatusPills(h.status);
+  renderLayoutSuggestion();
+
+  document.getElementById('panel-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function renderStatusPills(active){
+  const pills=document.querySelectorAll('.status-pill');
+  pills.forEach(p=>{
+    p.className='status-pill';
+    const s=p.getAttribute('onclick').match(/'(\w+)'/)[1];
+    if(s===active) p.classList.add('active-'+active);
+  });
+}
+
+function setStatus(s){
+  if(currentId===null)return;
+  const h=houses.find(h=>h.id===currentId);
+  if(!h)return;
+  h.status=s;
+  renderStatusPills(s);
+  save();render();
+}
+
+function renderLayoutSuggestion(){
+  const type=document.getElementById('pf-type').value;
+  const box=document.getElementById('layout-suggestion-box');
+  if(type==='2b2b'){
+    box.innerHTML=`
+      <div class="layout-suggestion">
+        <h4>2 Bed / 2 Bath tips</h4>
+        <ul>
+          <li>Look for split bedroom layouts — each bedroom on opposite sides for privacy</li>
+          <li>Check if both bathrooms are en-suite or shared</li>
+          <li>Ideal sq ft: 950–1,200 sq ft for comfortable 2B/2B</li>
+          <li>Key amenity to confirm: in-unit laundry vs shared</li>
+          <li>Ask about storage — closet sizes matter in 2B/2B</li>
+        </ul>
+      </div>`;
+  } else {
+    box.innerHTML=`
+      <div class="layout-suggestion">
+        <h4>3 Bed / 2 Bath tips</h4>
+        <ul>
+          <li>Confirm the third bedroom isn't too small — ask about sq ft per room</li>
+          <li>Check if the primary has an en-suite or if baths are shared across 3 rooms</li>
+          <li>Ideal sq ft: 1,200–1,600 sq ft — anything smaller may feel cramped</li>
+          <li>Great for a roommate setup — clarify lease terms for multiple tenants</li>
+          <li>Parking: 3B units often have 2 spots — confirm this upfront</li>
+        </ul>
+      </div>`;
+  }
+}
+
+function autosave(){
+  if(currentId===null)return;
+  const h=houses.find(h=>h.id===currentId);
+  if(!h)return;
+  h.name=document.getElementById('pf-name').value;
+  h.price=document.getElementById('pf-price').value;
+  h.type=document.getElementById('pf-type').value;
+  h.dist=document.getElementById('pf-dist').value;
+  h.url=document.getElementById('pf-url').value;
+  h.addr=document.getElementById('pf-addr').value;
+  h.contactName=document.getElementById('pf-contact-name').value;
+  h.phone=document.getElementById('pf-phone').value;
+  h.email=document.getElementById('pf-email').value;
+  h.available=document.getElementById('pf-available').value;
+  h.notes=document.getElementById('pf-notes').value;
+  document.getElementById('panel-name').textContent=h.name||h.addr||'Unnamed';
+  document.getElementById('panel-price').textContent=h.price||'Price TBD';
+  save();render();
+}
+
+function savePanel(){autosave();closePanel()}
+
+function handleLayoutUpload(e){
+  const file=e.target.files[0];
+  if(!file||currentId===null)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    const h=houses.find(h=>h.id===currentId);
+    if(!h)return;
+    h.layoutImg=ev.target.result;
+    const lp=document.getElementById('layout-preview');
+    lp.src=ev.target.result;lp.style.display='block';
+    // Also use as hero if none set
+    if(!h.heroImg){
+      h.heroImg=ev.target.result;
+      const img=document.getElementById('panel-hero-img');
+      img.src=ev.target.result;img.style.display='block';
+      document.getElementById('panel-hero-placeholder').style.display='none';
+    }
+    save();render();
+  };
+  reader.readAsDataURL(file);
+}
+
+function deleteProperty(){
+  if(currentId===null)return;
+  if(!confirm('Remove this listing?'))return;
+  houses=houses.filter(h=>h.id!==currentId);
+  save();closePanel();render();
+}
+
+function closePanel(){
+  document.getElementById('panel-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  currentId=null;
+}
+function maybeClosePanel(e){if(e.target===document.getElementById('panel-overlay'))closePanel()}
+
+// ── ADD MODAL ──
+function openAddModal(){document.getElementById('add-modal-overlay').classList.add('open')}
+function closeAddModal(){document.getElementById('add-modal-overlay').classList.remove('open')}
+function maybeCloseAdd(e){if(e.target===document.getElementById('add-modal-overlay'))closeAddModal()}
+
+function confirmAdd(){
+  const name=document.getElementById('a-name').value.trim();
+  if(!name){alert('Please enter a property name.');return}
+  houses.push({
+    id:nextId++,
+    name,
+    price:document.getElementById('a-price').value.trim(),
+    type:document.getElementById('a-type').value,
+    dist:document.getElementById('a-dist').value.trim(),
+    status:document.getElementById('a-status').value,
+    addr:document.getElementById('a-addr').value.trim(),
+    url:document.getElementById('a-url').value.trim(),
+    contactName:document.getElementById('a-contact').value.trim(),
+    phone:'',email:'',available:'',
+    notes:document.getElementById('a-notes').value.trim(),
+    layoutImg:'',heroImg:'',
+    added:Date.now()
+  });
+  ['a-name','a-price','a-dist','a-addr','a-url','a-contact','a-notes'].forEach(id=>document.getElementById(id).value='');
+  save();closeAddModal();render();
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanel();closeAddModal()}});
+
+// ── INIT ──
+updateHeroStats();
+</script>
+</body>
+</html>
